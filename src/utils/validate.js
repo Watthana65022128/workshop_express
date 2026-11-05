@@ -46,12 +46,4 @@ function objectId(value, name = "ID") {
   return value;
 }
 
-function pagination(query) {
-  const page = query.page === undefined ? 1 : Number(query.page);
-  const limit = query.limit === undefined ? 20 : Number(query.limit);
-  integer(page, "page", 1);
-  integer(limit, "limit", 1, 100);
-  return { page, limit, skip: (page - 1) * limit };
-}
-
-module.exports = { bodyObject, fields, string, integer, objectId, pagination };
+module.exports = { bodyObject, fields, string, integer, objectId };

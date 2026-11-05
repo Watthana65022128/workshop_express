@@ -2,10 +2,8 @@ const shopService = require("../services/shopService");
 const respond = require("../utils/respond");
 
 async function listPending(req, res) {
-  const result = await shopService.listPending(req.query);
-  return respond(res, 200, "Pending shops retrieved", result.data, {
-    pagination: result.pagination,
-  });
+  const shops = await shopService.listPending(req.query);
+  return respond(res, 200, "Pending shops retrieved", shops);
 }
 
 async function approve(req, res) {

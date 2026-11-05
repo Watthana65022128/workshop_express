@@ -2,35 +2,19 @@ const mongoose = require("mongoose");
 const Order = require("../models/Order");
 const Product = require("../models/Product");
 const AppError = require("../utils/AppError");
-const {
-  fields,
-  string,
-  integer,
-  objectId,
-  pagination,
-} = require("../utils/validate");
+const { fields, string, integer, objectId } = require("../utils/validate");
 
-async function list(shopId, query) {
-  const { page, limit, skip } = pagination(query);
+async function list(shopId) {
   const filter = { shopId };
-  const [data, total] = await Promise.all([
-    Order.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
-    Order.countDocuments(filter),
-  ]);
-  return { data, pagination: { page, limit, total } };
+  return Order.find(filter).sort({ createdAt: -1 });
 }
 
-async function listForProduct(shopId, productId, query) {
+async function listForProduct(shopId, productId) {
   objectId(productId, "product ID");
   const exists = await Product.exists({ _id: productId, shopId });
   if (!exists) throw new AppError(404, "Product not found");
-  const { page, limit, skip } = pagination(query);
   const filter = { shopId, productId };
-  const [data, total] = await Promise.all([
-    Order.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
-    Order.countDocuments(filter),
-  ]);
-  return { data, pagination: { page, limit, total } };
+  return Order.find(filter).sort({ createdAt: -1 });
 }
 
 async function create(shopId, productId, input) {

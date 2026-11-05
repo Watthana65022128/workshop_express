@@ -1,22 +1,15 @@
 const Account = require("../models/Account");
 const AppError = require("../utils/AppError");
-const { objectId, pagination } = require("../utils/validate");
+const { objectId } = require("../utils/validate");
 const { publicAccount } = require("./authService");
 
 async function listPending(query) {
   if (query.status !== undefined && query.status !== "pending") {
     throw new AppError(400, "Only status=pending is supported");
   }
-  const { page, limit, skip } = pagination(query);
   const filter = { role: "shop", status: "pending" };
-  const [accounts, total] = await Promise.all([
-    Account.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
-    Account.countDocuments(filter),
-  ]);
-  return {
-    data: accounts.map(publicAccount),
-    pagination: { page, limit, total },
-  };
+  const accounts = await Account.find(filter).sort({ createdAt: -1 });
+  return accounts.map(publicAccount);
 }
 
 async function approve(id) {

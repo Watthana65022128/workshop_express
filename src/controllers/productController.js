@@ -2,10 +2,8 @@ const productService = require("../services/productService");
 const respond = require("../utils/respond");
 
 async function list(req, res) {
-  const result = await productService.list(req.account.id, req.query);
-  return respond(res, 200, "Products retrieved", result.data, {
-    pagination: result.pagination,
-  });
+  const products = await productService.list(req.account.id);
+  return respond(res, 200, "Products retrieved", products);
 }
 
 async function create(req, res) {

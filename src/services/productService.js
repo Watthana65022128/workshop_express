@@ -1,12 +1,6 @@
 const Product = require("../models/Product");
 const AppError = require("../utils/AppError");
-const {
-  fields,
-  string,
-  integer,
-  objectId,
-  pagination,
-} = require("../utils/validate");
+const { fields, string, integer, objectId } = require("../utils/validate");
 
 function productInput(input, create = false) {
   const required = create ? ["name", "priceSatang", "stock"] : [];
@@ -29,14 +23,9 @@ function productInput(input, create = false) {
   return result;
 }
 
-async function list(shopId, query) {
-  const { page, limit, skip } = pagination(query);
+async function list(shopId) {
   const filter = { shopId, isActive: true };
-  const [data, total] = await Promise.all([
-    Product.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
-    Product.countDocuments(filter),
-  ]);
-  return { data, pagination: { page, limit, total } };
+  return Product.find(filter).sort({ createdAt: -1 });
 }
 
 async function create(shopId, input) {

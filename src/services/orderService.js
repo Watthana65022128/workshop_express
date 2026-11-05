@@ -3,7 +3,6 @@ const Order = require("../models/Order");
 const Product = require("../models/Product");
 const AppError = require("../utils/AppError");
 const { fields, string, integer, objectId } = require("../utils/validate");
-const { toMinorUnits, fromMinorUnits } = require("../utils/money");
 
 async function list(shopId) {
   const filter = { shopId };
@@ -41,8 +40,8 @@ async function create(shopId, productId, input) {
       throw new AppError(409, "Insufficient stock");
     }
 
-    const totalMinorUnits = toMinorUnits(product.price) * quantity;
-    if (!Number.isSafeInteger(totalMinorUnits))
+    const total = product.price * quantity;
+    if (!Number.isFinite(total))
       throw new AppError(400, "Order total is too large");
 
     const [order] = await Order.create(
@@ -53,7 +52,7 @@ async function create(shopId, productId, input) {
           productName: product.name,
           unitPrice: product.price,
           quantity,
-          total: fromMinorUnits(totalMinorUnits),
+          total,
           note,
         },
       ],

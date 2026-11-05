@@ -67,7 +67,7 @@ curl -X POST http://localhost:3000/api/v1/products -H "Authorization: Bearer TOK
 curl -X POST http://localhost:3000/api/v1/products/PRODUCT_ID/orders -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" -d '{"quantity":2,"note":"หน้าร้าน"}'
 ```
 
-ทุก response อยู่ในรูป `{ "status": 200, "message": "...", "data": ... }` รายการที่แบ่งหน้ามี `pagination: { page, limit, total }` เพิ่มเติม ราคาใน API ใช้หน่วยบาท เช่น `price: 125.50` เท่ากับ 125 บาท 50 สตางค์ ออร์เดอร์เก็บชื่อและราคา ณ เวลาขายเพื่อรักษาประวัติเมื่อมีการแก้สินค้า
+ทุก response อยู่ในรูป `{ "status": 200, "message": "...", "data": ... }` รายการที่แบ่งหน้ามี `pagination: { page, limit, total }` เพิ่มเติม ราคาใน API เป็นตัวเลข เช่น `price: 125.50` และยอดรวมคำนวณจาก `price * quantity` โดยตรง ออร์เดอร์เก็บชื่อและราคา ณ เวลาขายเพื่อรักษาประวัติเมื่อมีการแก้สินค้า
 
 หากฐานข้อมูลมีสินค้าหรือออร์เดอร์ที่สร้างก่อนเปลี่ยนชื่อฟิลด์เป็น `price`, `unitPrice` และ `total` ให้หยุด API ตรวจ `MONGO_URI` ใน `.env` แล้วรัน `npm run db:migrate-prices` ก่อนเปิด API ใหม่ คำสั่งนี้รองรับฟิลด์เดิมทั้งชื่อที่ลงท้าย `Satang` และ `Baht` และรันซ้ำได้
 

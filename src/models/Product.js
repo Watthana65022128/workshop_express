@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { toMinorUnits } = require("../utils/money");
 
 const productSchema = new mongoose.Schema(
   {
@@ -21,14 +20,7 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
       min: 0,
-      validate: (value) => {
-        try {
-          toMinorUnits(value);
-          return true;
-        } catch {
-          return false;
-        }
-      },
+      validate: Number.isFinite,
     },
     stock: {
       type: Number,

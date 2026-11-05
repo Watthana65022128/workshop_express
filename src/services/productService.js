@@ -1,7 +1,6 @@
 const Product = require("../models/Product");
 const AppError = require("../utils/AppError");
 const { fields, string, integer, objectId } = require("../utils/validate");
-const { toMinorUnits } = require("../utils/money");
 
 function productInput(input, create = false) {
   const required = create ? ["name", "price", "stock"] : [];
@@ -17,7 +16,9 @@ function productInput(input, create = false) {
   if ("description" in body)
     result.description = string(body.description, "description", 0, 1000);
   if ("price" in body) {
-    toMinorUnits(body.price);
+    if (typeof body.price !== "number" || !Number.isFinite(body.price) || body.price < 0) {
+      throw new AppError(400, "price must be a non-negative number");
+    }
     result.price = body.price;
   }
   if ("stock" in body) result.stock = integer(body.stock, "stock", 0);

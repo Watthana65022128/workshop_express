@@ -11,13 +11,4 @@ async function login(req, res) {
   return respond(res, 200, "Login successful", data);
 }
 
-function me(req, res) {
-  return respond(
-    res,
-    200,
-    "Account retrieved",
-    authService.publicAccount(req.account),
-  );
-}
-
-module.exports = { register, login, me };
+module.exports = { register, login };

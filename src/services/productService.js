@@ -10,8 +10,6 @@ function productInput(input, create = false) {
     ["name", "description", "price", "stock"],
     required,
   );
-  if (!create && "stock" in body)
-    throw new AppError(400, "Use the stock endpoint to adjust stock");
   if (!create && Object.keys(body).length === 0)
     throw new AppError(400, "At least one field is required");
   const result = {};
@@ -65,31 +63,4 @@ async function remove(shopId, id) {
   return product;
 }
 
-async function adjustStock(shopId, id, input) {
-  objectId(id, "product ID");
-  const body = fields(input, ["delta"], ["delta"]);
-  const delta = integer(body.delta, "delta", -Number.MAX_SAFE_INTEGER);
-  if (delta === 0) throw new AppError(400, "delta must not be zero");
-  const product = await Product.findOneAndUpdate(
-    {
-      _id: id,
-      shopId,
-      isActive: true,
-      stock:
-        delta < 0
-          ? { $gte: -delta }
-          : { $lte: Number.MAX_SAFE_INTEGER - delta },
-    },
-    { $inc: { stock: delta } },
-    { returnDocument: "after", runValidators: true },
-  );
-  if (product) return product;
-  const existing = await Product.findOne({ _id: id, shopId, isActive: true });
-  if (!existing) throw new AppError(404, "Product not found");
-  throw new AppError(
-    409,
-    delta < 0 ? "Insufficient stock" : "Stock limit exceeded",
-  );
-}
-
-module.exports = { list, create, get, update, remove, adjustStock };
+module.exports = { list, create, get, update, remove };

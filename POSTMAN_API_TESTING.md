@@ -20,7 +20,6 @@ Ecommerce API
 │   ├── POST Register shop
 │   ├── POST Login admin
 │   ├── POST Login shop
-│   └── GET My account
 ├── 02 Admin - Shops
 │   ├── GET Pending shops
 │   └── PUT Approve shop
@@ -29,7 +28,6 @@ Ecommerce API
 │   ├── POST Create product
 │   ├── GET Product by ID
 │   ├── PUT Update product
-│   ├── PATCH Adjust stock
 │   └── DELETE Archive product
 ├── 04 Shop - Orders
 │   ├── GET Orders
@@ -92,13 +90,6 @@ Ecommerce API
 
 ผลที่คาดหวัง: `200`; `data.account.role` เป็น `shop` จด `data.token` ไว้เป็น **shopToken**
 
-### GET My account
-
-- URL: `http://localhost:5000/api/v1/me`
-- Authorization: Bearer Token = **shopToken**
-- Body: ไม่มี
-- ผลที่คาดหวัง: `200`; `data.status` เป็น `pending` ก่อนอนุมัติ และ `approved` หลังอนุมัติ
-
 ## 02 Admin - Shops
 
 ตั้ง Bearer Token = **adminToken** ที่ Folder นี้
@@ -146,24 +137,12 @@ Ecommerce API
 ```json
 {
   "name": "Notebook v2",
-  "price": 130
+  "price": 130,
+  "stock": 15
 }
 ```
 
-ผลที่คาดหวัง: `200`; ชื่อและราคาเปลี่ยน หากต้องการแก้สต็อกให้ใช้ Adjust stock
-
-### PATCH Adjust stock
-
-- URL: `http://localhost:5000/api/v1/products/PRODUCT_ID/stock`
-- Body:
-
-```json
-{
-  "delta": 5
-}
-```
-
-ผลที่คาดหวัง: `200`; หากเริ่มจากสต็อก `10` จะเป็น `15` ใช้ค่าลบ เช่น `-5` เพื่อลดสต็อก และห้ามใช้ `0`
+ผลที่คาดหวัง: `200`; ชื่อ ราคา และสต็อกเปลี่ยนเป็นค่าที่ส่ง (`stock: 15`) สามารถส่งเฉพาะฟิลด์ที่ต้องการแก้ได้ ถ้าต้องการเปลี่ยนสต็อกอย่างเดียวให้ส่ง `{"stock":15}`
 
 ## 04 Shop - Orders
 
@@ -196,13 +175,12 @@ Ecommerce API
 
 | กรณี | วิธีส่ง | HTTP status ที่คาดหวัง |
 | --- | --- | --- |
-| ไม่มี token | `GET /api/v1/me` โดยเลือก No Auth | `401` |
-| token ผิด | `GET /api/v1/me` โดยใช้ Bearer Token `invalid` | `401` |
+| ไม่มี token | `GET /api/v1/products` โดยเลือก No Auth | `401` |
+| token ผิด | `GET /api/v1/products` โดยใช้ Bearer Token `invalid` | `401` |
 | รหัสผ่านผิด | `POST /api/v1/login` ด้วยอีเมลถูก รหัสผ่านผิด | `401` |
 | อีเมลซ้ำ | `POST /api/v1/register` ด้วยอีเมลที่สมัครแล้ว | `409` |
 | Body ไม่ครบ | `POST /api/v1/products` โดยไม่ใส่ `price` | `400` |
-| ส่ง stock ไปที่ Update | `PUT /api/v1/products/PRODUCT_ID` ด้วย `{"stock":99}` | `400` |
-| delta เป็นศูนย์ | `PATCH /api/v1/products/PRODUCT_ID/stock` ด้วย `{"delta":0}` | `400` |
+| สต็อกติดลบ | `PUT /api/v1/products/PRODUCT_ID` ด้วย `{"stock":-1}` | `400` |
 | สต็อกไม่พอ | `POST /api/v1/products/PRODUCT_ID/orders` ด้วย `quantity` มากกว่าสต็อก | `409` |
 | ร้านเข้าหน้าแอดมิน | `GET /api/v1/shops` ด้วย shopToken | `403` |
 | แอดมินเข้าหน้าร้าน | `GET /api/v1/products` ด้วย adminToken | `403` |
@@ -212,9 +190,9 @@ Ecommerce API
 
 ## ลำดับทดสอบที่แนะนำ
 
-1. API info → Register shop → Login shop → My account
-2. Login admin → Pending shops → Approve shop → My account อีกครั้ง
-3. Create product → Products → Product by ID → Update product → Adjust stock
+1. API info → Register shop → Login shop (ตรวจ `data.account.status` เป็น `pending`)
+2. Login admin → Pending shops → Approve shop → Login shop อีกครั้ง (สถานะเป็น `approved`)
+3. Create product → Products → Product by ID → Update product (รวมสต็อก)
 4. Record order → Orders → Product orders → Product by ID เพื่อตรวจสต็อก
 5. Archive product → Product orders อีกครั้ง → Error examples
 

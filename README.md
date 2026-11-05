@@ -45,15 +45,13 @@ Base URL: `http://localhost:3000/api/v1` ส่ง JSON และใช้ `Auth
 | --- | --- | --- | --- |
 | POST | `/register` | สาธารณะ | `email`, `password`, `shopName` |
 | POST | `/login` | สาธารณะ | `email`, `password` |
-| GET | `/me` | ผู้ล็อกอิน | - |
 | GET | `/shops?status=pending` | แอดมิน | - |
 | PUT | `/shops/:id/approve` | แอดมิน | - |
 | GET | `/products` | ร้านที่อนุมัติ | - |
 | POST | `/products` | ร้านที่อนุมัติ | `name`, `description?`, `price`, `stock` |
 | GET | `/products/:id` | เจ้าของสินค้า | - |
-| PUT | `/products/:id` | เจ้าของสินค้า | `name?`, `description?`, `price?` |
+| PUT | `/products/:id` | เจ้าของสินค้า | `name?`, `description?`, `price?`, `stock?` |
 | DELETE | `/products/:id` | เจ้าของสินค้า | - |
-| PATCH | `/products/:id/stock` | เจ้าของสินค้า | `delta` จำนวนเต็มที่ไม่ใช่ 0 |
 | GET | `/orders` | ร้านที่อนุมัติ | - |
 | GET | `/products/:id/orders` | เจ้าของสินค้า | - |
 | POST | `/products/:id/orders` | เจ้าของสินค้า | `quantity`, `note?` |

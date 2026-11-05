@@ -30,13 +30,4 @@ async function remove(req, res) {
   return respond(res, 200, "Product archived", product);
 }
 
-async function adjustStock(req, res) {
-  const product = await productService.adjustStock(
-    req.account.id,
-    req.params.id,
-    req.body,
-  );
-  return respond(res, 200, "Stock adjusted", product);
-}
-
-module.exports = { list, create, get, update, remove, adjustStock };
+module.exports = { list, create, get, update, remove };

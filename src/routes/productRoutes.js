@@ -10,7 +10,6 @@ router.post("/", productController.create);
 router.get("/:id", productController.get);
 router.put("/:id", productController.update);
 router.delete("/:id", productController.remove);
-router.patch("/:id/stock", productController.adjustStock);
 router.get("/:id/orders", orderController.listForProduct);
 router.post("/:id/orders", orderController.create);
 

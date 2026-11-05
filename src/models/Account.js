@@ -14,7 +14,7 @@ const accountSchema = new mongoose.Schema(
     role: { type: String, enum: ["shop", "admin"], required: true },
     status: { type: String, enum: ["pending", "approved"], required: true },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
 
 module.exports = mongoose.model("Account", accountSchema);

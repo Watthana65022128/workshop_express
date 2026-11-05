@@ -49,9 +49,9 @@ Base URL: `http://localhost:3000/api/v1` ส่ง JSON และใช้ `Auth
 | GET | `/shops?status=pending` | แอดมิน | - |
 | PUT | `/shops/:id/approve` | แอดมิน | - |
 | GET | `/products` | ร้านที่อนุมัติ | - |
-| POST | `/products` | ร้านที่อนุมัติ | `name`, `description?`, `priceSatang`, `stock` |
+| POST | `/products` | ร้านที่อนุมัติ | `name`, `description?`, `price`, `stock` |
 | GET | `/products/:id` | เจ้าของสินค้า | - |
-| PUT | `/products/:id` | เจ้าของสินค้า | `name?`, `description?`, `priceSatang?` |
+| PUT | `/products/:id` | เจ้าของสินค้า | `name?`, `description?`, `price?` |
 | DELETE | `/products/:id` | เจ้าของสินค้า | - |
 | PATCH | `/products/:id/stock` | เจ้าของสินค้า | `delta` จำนวนเต็มที่ไม่ใช่ 0 |
 | GET | `/orders` | ร้านที่อนุมัติ | - |
@@ -65,11 +65,13 @@ Base URL: `http://localhost:3000/api/v1` ส่ง JSON และใช้ `Auth
 ```sh
 curl -X POST http://localhost:3000/api/v1/register -H "Content-Type: application/json" -d '{"email":"shop@example.com","password":"strong-password","shopName":"My Shop"}'
 curl -X POST http://localhost:3000/api/v1/login -H "Content-Type: application/json" -d '{"email":"shop@example.com","password":"strong-password"}'
-curl -X POST http://localhost:3000/api/v1/products -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" -d '{"name":"Notebook","priceSatang":12500,"stock":10}'
+curl -X POST http://localhost:3000/api/v1/products -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" -d '{"name":"Notebook","price":125,"stock":10}'
 curl -X POST http://localhost:3000/api/v1/products/PRODUCT_ID/orders -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" -d '{"quantity":2,"note":"หน้าร้าน"}'
 ```
 
-ทุก response อยู่ในรูป `{ "status": 200, "message": "...", "data": ... }` รายการที่แบ่งหน้ามี `pagination: { page, limit, total }` เพิ่มเติม ราคาใช้หน่วยสตางค์ เช่น `12500` เท่ากับ 125 บาท ออร์เดอร์เก็บชื่อและราคา ณ เวลาขายเพื่อรักษาประวัติเมื่อมีการแก้สินค้า
+ทุก response อยู่ในรูป `{ "status": 200, "message": "...", "data": ... }` รายการที่แบ่งหน้ามี `pagination: { page, limit, total }` เพิ่มเติม ราคาใน API ใช้หน่วยบาท เช่น `price: 125.50` เท่ากับ 125 บาท 50 สตางค์ ออร์เดอร์เก็บชื่อและราคา ณ เวลาขายเพื่อรักษาประวัติเมื่อมีการแก้สินค้า
+
+หากฐานข้อมูลมีสินค้าหรือออร์เดอร์ที่สร้างก่อนเปลี่ยนชื่อฟิลด์เป็น `price`, `unitPrice` และ `total` ให้หยุด API ตรวจ `MONGO_URI` ใน `.env` แล้วรัน `npm run db:migrate-prices` ก่อนเปิด API ใหม่ คำสั่งนี้รองรับฟิลด์เดิมทั้งชื่อที่ลงท้าย `Satang` และ `Baht` และรันซ้ำได้
 
 ## ทดสอบ
 

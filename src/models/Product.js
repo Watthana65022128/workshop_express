@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { satangToBaht } = require("../utils/money");
+const { toMinorUnits } = require("../utils/money");
 
 const productSchema = new mongoose.Schema(
   {
@@ -17,11 +17,18 @@ const productSchema = new mongoose.Schema(
       maxlength: 120,
     },
     description: { type: String, default: "", trim: true, maxlength: 1000 },
-    priceSatang: {
+    price: {
       type: Number,
       required: true,
       min: 0,
-      validate: Number.isSafeInteger,
+      validate: (value) => {
+        try {
+          toMinorUnits(value);
+          return true;
+        } catch {
+          return false;
+        }
+      },
     },
     stock: {
       type: Number,
@@ -31,14 +38,13 @@ const productSchema = new mongoose.Schema(
     },
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
 
 productSchema.index({ shopId: 1, isActive: 1, createdAt: -1 });
 productSchema.set("toJSON", {
   transform(_doc, product) {
-    product.priceBaht = satangToBaht(product.priceSatang);
-    delete product.priceSatang;
+    delete product.__v;
     return product;
   },
 });

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { satangToBaht } = require("../utils/money");
 
 const productSchema = new mongoose.Schema(
   {
@@ -34,5 +35,12 @@ const productSchema = new mongoose.Schema(
 );
 
 productSchema.index({ shopId: 1, isActive: 1, createdAt: -1 });
+productSchema.set("toJSON", {
+  transform(_doc, product) {
+    product.priceBaht = satangToBaht(product.priceSatang);
+    delete product.priceSatang;
+    return product;
+  },
+});
 
 module.exports = mongoose.model("Product", productSchema);

@@ -1,12 +1,13 @@
 const Product = require("../models/Product");
 const AppError = require("../utils/AppError");
 const { fields, string, integer, objectId } = require("../utils/validate");
+const { bahtToSatang } = require("../utils/money");
 
 function productInput(input, create = false) {
-  const required = create ? ["name", "priceSatang", "stock"] : [];
+  const required = create ? ["name", "priceBaht", "stock"] : [];
   const body = fields(
     input,
-    ["name", "description", "priceSatang", "stock"],
+    ["name", "description", "priceBaht", "stock"],
     required,
   );
   if (!create && "stock" in body)
@@ -17,8 +18,8 @@ function productInput(input, create = false) {
   if ("name" in body) result.name = string(body.name, "name", 2, 120);
   if ("description" in body)
     result.description = string(body.description, "description", 0, 1000);
-  if ("priceSatang" in body)
-    result.priceSatang = integer(body.priceSatang, "priceSatang", 0);
+  if ("priceBaht" in body)
+    result.priceSatang = bahtToSatang(body.priceBaht);
   if ("stock" in body) result.stock = integer(body.stock, "stock", 0);
   return result;
 }

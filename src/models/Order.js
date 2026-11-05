@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { satangToBaht } = require("../utils/money");
 
 const orderSchema = new mongoose.Schema(
   {
@@ -25,5 +26,14 @@ const orderSchema = new mongoose.Schema(
 
 orderSchema.index({ shopId: 1, createdAt: -1 });
 orderSchema.index({ shopId: 1, productId: 1, createdAt: -1 });
+orderSchema.set("toJSON", {
+  transform(_doc, order) {
+    order.unitPriceBaht = satangToBaht(order.unitPriceSatang);
+    order.totalBaht = satangToBaht(order.totalSatang);
+    delete order.unitPriceSatang;
+    delete order.totalSatang;
+    return order;
+  },
+});
 
 module.exports = mongoose.model("Order", orderSchema);

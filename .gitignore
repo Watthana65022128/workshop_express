@@ -1,0 +1,5 @@
+node_modules/
+.mongo-data/
+.env
+coverage/
+npm-debug.log*
